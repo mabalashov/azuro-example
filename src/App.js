@@ -12,6 +12,7 @@ const Web3 = require('web3');
 
 function App() {
   const [allowance, setAllowance] = useState(0);
+  const [account, setAccount] = useState(0);
   const [library, setLibrary] = useState(null);
 
   useEffect(() => {
@@ -38,11 +39,28 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      // const allowance = await fetchAllowance(account);
+      if (!library) {
+        return;
+      }
 
-      // setAllowance(allowance);
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const account = accounts[0];
+
+      setAccount(account);
     })()
   }, [library]);
+
+  useEffect(() => {
+    (async () => {
+      if (!account) {
+        return;
+      }
+
+      const allowance = await fetchAllowance(account);
+
+      setAllowance(allowance);
+    })();
+  }, [account])
 
   return (
     <div className="App">
